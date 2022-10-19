@@ -2,22 +2,23 @@
 # Copyright(c) 2017-2019 Intel Corporation
 
 apps = [
-        'dumpcap',
-        'pdump',
-        'proc-info',
-        'test-acl',
-        'test-bbdev',
-        'test-cmdline',
-        'test-compress-perf',
-        'test-crypto-perf',
-        'test-eventdev',
-        'test-fib',
-        'test-flow-perf',
-        'test-gpudev',
-        'test-pipeline',
-        'test-pmd',
-        'test-regex',
-        'test-sad',
+        #'dumpcap',
+        #'pdump',
+        #'proc-info',
+        #'test-acl',
+        #'test-bbdev',
+        #'test-cmdline',
+        #'test-compress-perf',
+        #'test-crypto-perf',
+        #'test-eventdev',
+        #'test-fib',
+        #'test-flow-perf',
+        #'test-gpudev',
+        #'test-pipeline',
+        #'test-pmd',
+        #'test-regex',
+        #'test-sad',
+        'firewall',
 ]
 
 default_cflags = machine_args + ['-DALLOW_EXPERIMENTAL_API']
@@ -33,6 +34,14 @@ foreach app:apps
     includes = []
     cflags = default_cflags
     ldflags = default_ldflags
+
+    if name == 'firewall'
+        lds_script = meson.current_source_dir() + '/module_section.lds' 
+        ldflags += ['-T', lds_script]
+        ldflags += ['-ljson-c']
+        ldflags += ['-lcli']
+    endif
+
     objs = [] # other object files to link against, used e.g. for
               # instruction-set optimized versions of code
 

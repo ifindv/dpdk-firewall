@@ -1,0 +1,6 @@
+[submodule "module/json-c"]
+	path = module/json-c
+	url = https://github.com/ByteOder/json-c.git
+[submodule "module/libcli"]
+	path = module/libcli
+	url = https://github.com/ByteOder/libcli.git

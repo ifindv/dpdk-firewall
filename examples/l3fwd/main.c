@@ -192,8 +192,8 @@ static struct l3fwd_lkp_mode l3fwd_fib_lkp = {
  * 198.18.{0-15}.0/24 = Port {0-15}
  */
 const struct ipv4_l3fwd_route ipv4_l3fwd_route_array[] = {
-	{RTE_IPV4(198, 18, 0, 0), 24, 0},
-	{RTE_IPV4(198, 18, 1, 0), 24, 1},
+	{RTE_IPV4(10, 1, 0, 0), 24, 0},
+	{RTE_IPV4(10, 2, 0, 0), 24, 1},
 	{RTE_IPV4(198, 18, 2, 0), 24, 2},
 	{RTE_IPV4(198, 18, 3, 0), 24, 3},
 	{RTE_IPV4(198, 18, 4, 0), 24, 4},

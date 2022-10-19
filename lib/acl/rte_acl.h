@@ -101,6 +101,7 @@ struct rte_acl_rule_data {
 	uint32_t category_mask; /**< Mask of categories for that rule. */
 	int32_t  priority;      /**< Priority for that rule. */
 	uint32_t userdata;      /**< Associated with the rule user data. */
+	uint32_t action;		/**< Use action not category to simpfy. */
 };
 
 /**
@@ -348,11 +349,21 @@ rte_acl_set_ctx_classify(struct rte_acl_ctx *ctx,
 void
 rte_acl_dump(const struct rte_acl_ctx *ctx);
 
+void
+_rte_acl_dump(const struct rte_acl_ctx *ctx, char *buffer);
+
 /**
  * Dump all ACL context structures to the console.
  */
 void
 rte_acl_list_dump(void);
+
+/**
+ * Get acl rule data by rule id.
+ * */
+void *
+rte_acl_rule_data(struct rte_acl_ctx *ctx, uint32_t rule_id);
+
 
 #ifdef __cplusplus
 }

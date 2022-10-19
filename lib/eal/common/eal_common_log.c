@@ -78,6 +78,19 @@ rte_openlog_stream(FILE *f)
 	return 0;
 }
 
+int
+_rte_log_init(const char *fname, uint32_t level)
+{
+	FILE *f = fopen(fname, "w+");
+	if (!f) {
+		return -1;
+	}
+
+	rte_logs.file = f;
+	rte_logs.level = (uint32_t)level;
+	return 0;
+}
+
 FILE *
 rte_log_get_stream(void)
 {
@@ -132,6 +145,15 @@ rte_log_can_log(uint32_t logtype, uint32_t level)
 		return false;
 
 	if (level > (uint32_t)log_level)
+		return false;
+
+	return true;
+}
+
+bool
+_rte_log_can_log(__rte_unused uint32_t logtype, uint32_t level)
+{
+	if (level > rte_log_get_global_level())
 		return false;
 
 	return true;
@@ -505,6 +527,24 @@ rte_vlog(uint32_t level, uint32_t logtype, const char *format, va_list ap)
 	return ret;
 }
 
+int
+_rte_vlog(uint32_t level, uint32_t logtype, const char *format, va_list ap)
+{
+	FILE *f = rte_log_get_stream();
+	int ret;
+
+	if (!_rte_log_can_log(logtype, level))
+		return 0;
+
+	/* save loglevel and logtype in a global per-lcore variable */
+	RTE_PER_LCORE(log_cur_msg).loglevel = level;
+	RTE_PER_LCORE(log_cur_msg).logtype = logtype;
+
+	ret = vfprintf(f, format, ap);
+	fflush(f);
+	return ret;
+}
+
 /*
  * Generates a log message The message will be sent in the stream
  * defined by the previous call to rte_openlog_stream().
@@ -518,6 +558,18 @@ rte_log(uint32_t level, uint32_t logtype, const char *format, ...)
 
 	va_start(ap, format);
 	ret = rte_vlog(level, logtype, format, ap);
+	va_end(ap);
+	return ret;
+}
+
+int
+_rte_log(uint32_t level, uint32_t logtype, const char *format, ...)
+{
+	va_list ap;
+	int ret;
+
+	va_start(ap, format);
+	ret = _rte_vlog(level, logtype, format, ap);
 	va_end(ap);
 	return ret;
 }

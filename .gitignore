@@ -42,3 +42,6 @@ build-*
 # ignore other build directory patterns
 *-gcc*
 *-clang*
+
+# sftp plugin config of sublime
+sftp-config.json

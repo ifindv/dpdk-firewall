@@ -447,6 +447,27 @@ acl_add_rules(struct rte_acl_ctx *ctx, const void *rules, uint32_t num)
 	return 0;
 }
 
+void *
+rte_acl_rule_data(struct rte_acl_ctx *ctx, uint32_t rule_id)
+{
+	struct rte_acl_rule *rule;
+
+	if (!rule_id) {
+		return NULL;
+	}
+
+	if (rule_id > ctx->num_rules) {
+		return NULL;
+	}
+
+	rule = (struct rte_acl_rule *)((uint8_t *)ctx->rules + ctx->rule_sz * (rule_id - 1));
+	if (!rule) {
+		return NULL;
+	}
+
+	return &rule->data;
+}
+
 static int
 acl_check_rule(const struct rte_acl_rule_data *rd)
 {
@@ -523,6 +544,23 @@ rte_acl_dump(const struct rte_acl_ctx *ctx)
 	printf("  num_rules=%"PRIu32"\n", ctx->num_rules);
 	printf("  num_categories=%"PRIu32"\n", ctx->num_categories);
 	printf("  num_tries=%"PRIu32"\n", ctx->num_tries);
+}
+
+void
+_rte_acl_dump(const struct rte_acl_ctx *ctx, char *buffer)
+{
+	if (!ctx || !buffer)
+		return;
+
+	sprintf(buffer, "acl context <%s>@%p\n", ctx->name, ctx);
+	sprintf(buffer + strlen(buffer), "  alg=%"PRId32"\n", ctx->alg);
+	sprintf(buffer + strlen(buffer), "  socket_id=%"PRId32"\n", ctx->socket_id);
+	sprintf(buffer + strlen(buffer), "  first_load_sz=%"PRIu32"\n", ctx->first_load_sz);
+	sprintf(buffer + strlen(buffer), "  max_rules=%"PRIu32"\n", ctx->max_rules);
+	sprintf(buffer + strlen(buffer), "  rule_size=%"PRIu32"\n", ctx->rule_sz);
+	sprintf(buffer + strlen(buffer), "  num_rules=%"PRIu32"\n", ctx->num_rules);
+	sprintf(buffer + strlen(buffer), "  num_categories=%"PRIu32"\n", ctx->num_categories);
+	sprintf(buffer + strlen(buffer), "  num_tries=%"PRIu32"\n", ctx->num_tries);
 }
 
 /*
